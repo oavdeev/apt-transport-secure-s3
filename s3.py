@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 import sys
 import signal
-import shutil
-import syslog
-import os
 import urlparse
 import hashlib
 from boto.s3.connection import S3Connection 
@@ -11,13 +8,8 @@ import boto.exception
  
 # ignore Ctrl+C
 signal.signal(signal.SIGINT, lambda x,f: None)
- 
-# debug logging
-def log(s):
-    pass
- 
+
 def out(s):
-    log("Out: %s" % s)
     sys.stdout.write(s)
     sys.stdout.flush()
  
@@ -52,8 +44,6 @@ def acquire(args):
     filename = args['Filename']
     
     u = urlparse.urlparse('http://' + uri[5:])
-    log("username: %s" % u.username )
-    log("password: %s" % u.password)
     try:
         status(uri, "Connecting to S3")
         conn = S3Connection(u.username, u.password)
@@ -110,7 +100,6 @@ if __name__ == '__main__':
  
     while True:
         req = read_request()
-        log(repr(req))
         if req is None:
             sys.exit(0)
         # not sure why, but apt sometimes sends extra newlines
